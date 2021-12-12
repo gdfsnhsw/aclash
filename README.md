@@ -24,8 +24,6 @@ Simple clash premiun core installer with full tun support for Linux.
    # install
    ./run.sh tun           # Transfer TCP and UDP to utun device
    ./run.sh tproxy        # TProxy TCP and TProxy UDP
-   ./run.sh tproxy-tun    # TProxy TCP and transfer UDP to utun device(not work, need help)
-   ./run.sh redir-tun     # Redirect TCP and transfer UDP to utun device
 
    # uninstall
    ./run.sh uninstall
