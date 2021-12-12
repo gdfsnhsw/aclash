@@ -10,6 +10,11 @@ Simple clash premiun core installer with full tun support for Linux.
    apt install git nftables iproute2 jq
    ```
 
+   ```bash
+   wget https://ghproxy.com/https://github.com/mikefarah/yq/releases/download/v4.16.1/yq_linux_amd64 -O /usr/bin/yq &&\
+    chmod +x /usr/bin/yq
+   ```
+
 2. Clone repository
 
    ```bash
@@ -20,7 +25,9 @@ Simple clash premiun core installer with full tun support for Linux.
 
    ```bash
    cd clash-install
-
+   ```
+   
+   ```bash
    # core
    ./run.sh dl            # Download latest clash premium & dashboard
    ./run.sh dl_proxy      # Download latest clash premium & dashboard with proxy
