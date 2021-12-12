@@ -86,6 +86,33 @@ function _download() {
 
     echo "Clash Premium core & dashboard have been downloaded successfully "
     exit 1
+
+#yq 
+
+    yq_url="https://api.github.com/repos/mikefarah/yq/releases/latest"
+    echo "Get yq_release.json"
+    assert curl -s -o yq_release.json "${yq_url}"
+
+    if [ ! -f yq_release.json ]; then
+        echo "Failed to get yq release information"
+        exit 1
+    fi
+
+    yq_download_url=$(jq ".assets[${i}].browser_download_url" yq_release.json | tr -d '"' | grep -m1 yq_linux_amd64)
+    if [ "${yq_download_url}" == "" ]; then
+        echo "No compatible yq for your platform"
+        exit 1
+    fi
+
+    echo "Start download yq from ${yq_download_url}"
+    assert curl -L -# -o yq "${url_prefix}${yq_download_url}"
+    if [ ! -f yq ]; then
+        echo "Failed to download yq"
+        echo "Please download and upload it to current directory manually"
+        exit 1
+    fi
+    assert cp yq /usr/bin/yq
+    assert chmod +x /usr/bin/yq
 }
 
 function _install() {
