@@ -18,13 +18,13 @@ Simple clash premiun core installer with full tun support for Linux.
 2. Clone repository
 
    ```bash
-   git clone https://github.com/gdfsnhsw/aioclash clash-install
+   git clone https://github.com/gdfsnhsw/aioclash aioclash
    ```
 
 3. Run Installer
 
    ```bash
-   cd clash-install
+   cd aioclash
    ```
    
    ```bash
