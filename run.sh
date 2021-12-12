@@ -81,8 +81,8 @@ function _download() {
         echo "Please download and upload it to current directory manually"
         exit 1
     fi
-    assert unzip ui.zip
-    assert mv -f -T clash-dashboard-gh-pages ui
+#     assert unzip ui.zip
+#     assert mv -f -T clash-dashboard-gh-pages ui
 
     echo "Clash Premium core & dashboard have been downloaded successfully "
     
