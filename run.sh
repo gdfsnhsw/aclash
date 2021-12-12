@@ -160,6 +160,9 @@ function _install() {
 
     assert install -m 0644 files/clash.service /etc/systemd/system/clash.service
     assert install -m 0644 files/99-clash.rules /etc/udev/rules.d/99-clash.rules
+    assert unzip ui.zip
+    assert mv -f -T clash-dashboard-gh-pages ui
+    rm -rf /etc/clash/ui
     assert mv -f -T ui /etc/clash/ui
 
     if [ ! -f "/etc/clash/config.yaml" ];then
@@ -227,6 +230,7 @@ function _uninstall() {
     rm -rf /bin/bypass-proxy-uid
     rm -rf /bin/bypass-proxy
     rm -rf /etc/default/clash
+    rm -rf /etc/clash/ui
 
     echo "Uninstall successfully"
 
