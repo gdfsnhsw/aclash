@@ -47,8 +47,8 @@ Simple clash premiun core installer with full tun support for Linux.
    ./run.sh tproxy        # TProxy TCP and TProxy UDP
    ```
 
-   ```bash
    # uninstall
+   ```bash
    ./run.sh uninstall
    ```
 
