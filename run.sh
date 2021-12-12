@@ -36,7 +36,7 @@ function _download() {
         exit 1
         ;;
     esac
-
+# Clash Premium core
     release_info_url="https://api.github.com/repos/Dreamacro/clash/releases/tags/premium"
 
     if [[ "$1" =~ "proxy" ]]; then
@@ -69,6 +69,7 @@ function _download() {
     assert gzip -d clash-premium.gz
     assert mv clash-premium clash
 
+# Clash dashboard
     clash_dashboard_download_url="https://github.com/Dreamacro/clash-dashboard/archive/gh-pages.zip"
     echo "Start download Clash Dashboard from ${clash_dashboard_download_url}"
     assert curl -L -# -o ui.zip "${url_prefix}${clash_dashboard_download_url}"
