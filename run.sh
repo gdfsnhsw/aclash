@@ -166,13 +166,13 @@ function _install() {
         assert install -m 0600 files/config.yaml /etc/clash/config.yaml
     fi
 
-    FORWARD_DNS_REDIRECT=$(yq eval '.dns.listen' /etc/clash/config.yaml | awk -F':' '{ print int($2) }')
-    FORWARD_PROXY_REDIRECT=$(yq eval '.redir-port' /etc/clash/config.yaml)
+    FORWARD_DNS_REDIRECT=$(yq e '.dns.listen' /etc/clash/config.yaml | awk -F':' '{ print int($2) }')
+    FORWARD_PROXY_REDIRECT=$(yq e '.redir-port' /etc/clash/config.yaml)
 
     if [[ ! "$1" =~ "tproxy" ]]; then
-        FORWARD_PROXY_REDIRECT=$(yq eval '.tproxy-port' /etc/clash/config.yaml)
+        FORWARD_PROXY_REDIRECT=$(yq e '.tproxy-port' /etc/clash/config.yaml)
     elif [[ ! "$1" =~ "redir" ]]; then
-        FORWARD_PROXY_REDIRECT=$(yq eval '.redir-port' /etc/clash/config.yaml)
+        FORWARD_PROXY_REDIRECT=$(yq e '.redir-port' /etc/clash/config.yaml)
     fi
 
     if [[ FORWARD_PROXY_REDIRECT != null ]];then
