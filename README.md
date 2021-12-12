@@ -24,7 +24,7 @@ Simple clash premiun core installer with full tun support for Linux.
 3. Run Installer
 
    ```bash
-   cd aioclash
+   cd aioclash | chmod +x /root/aioclash/run.sh
    ```
    
    ```bash
