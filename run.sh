@@ -85,7 +85,7 @@ function _download() {
     assert mv -f -T clash-dashboard-gh-pages ui
 
     echo "Clash Premium core & dashboard have been downloaded successfully "
-    exit 1
+    
 
 #yq 
 
@@ -113,6 +113,7 @@ function _download() {
     fi
     assert cp yq /usr/bin/yq
     assert chmod +x /usr/bin/yq
+    exit 1
 }
 
 function _install() {
