@@ -28,15 +28,26 @@ Simple clash premiun core installer with full tun support for Linux.
    cd aioclash
    ```
    
-   ```bash
+   
    # core
+   ```bash
    ./run.sh dl            # Download latest clash premium & dashboard
+   ```
+   
+   ```bash
    ./run.sh dl_proxy      # Download latest clash premium & dashboard with proxy
+   ```
 
    # install
+   ```bash
    ./run.sh tun           # Transfer TCP and UDP to utun device
+   ```
+   
+   ```bash
    ./run.sh tproxy        # TProxy TCP and TProxy UDP
+   ```
 
+   ```bash
    # uninstall
    ./run.sh uninstall
    ```
