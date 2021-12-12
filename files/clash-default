@@ -1,0 +1,16 @@
+# clash tun scripts configuration
+
+# cgroup net_cls classid
+BYPASS_CGROUP_CLASSID=10000
+
+# netfilter mark
+NETFILTER_MARK=100
+
+# iproute2 rule table id
+IPROUTE2_TABLE_ID=100
+
+# dns redirect
+FORWARD_DNS_REDIRECT=:1053
+
+# tproxy (TProxy TCP and TProxy UDP) or Redir (Redirect TCP and TProxy UDP)
+FORWARD_PROXY_REDIRECT=:7893
