@@ -249,6 +249,22 @@ function _install() {
     rm -rf /etc/clash/ui
     assert mv -f -T ui /etc/clash/ui
 
+    if [ ! -f "/etc/subconverter" ];then
+    tar -zxvf subconverter.tar.gz -C /etc/
+    assert install -m 0644 subconverter/formyairport.ini /etc/subconverter/profiles
+    assert install -m 0644 subconverter/Loyalsoldier.ini /etc/subconverter/profiles
+    assert install -m 0644 subconverter/yuanlam.ini /etc/subconverter/profiles
+    assert install -m 0644 subconverter/all_base.tpl /etc/subconverter/base/all_base.tpl
+    fi
+
+    assert install -m 0755 ./mosdns /bin/mosdns
+    if [ ! -f "/etc/mosdns" ];then
+    mkdir /etc/mosdns
+    assert install -m 0644 ./geoip.dat /etc/mosdns
+    assert install -m 0644 ./geosite.dat /etc/mosdns
+    assert install -m 0644 files/config_mosdns.yaml /etc/mosdns/config.yaml
+    fi
+    
     if [ ! -f "/etc/clash/config.yaml" ];then
         assert install -m 0600 files/config.yaml /etc/clash/config.yaml
     fi
