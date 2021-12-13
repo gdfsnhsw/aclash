@@ -336,6 +336,9 @@ function _uninstall() {
     rm -rf /bin/bypass-proxy
     rm -rf /etc/default/clash
     rm -rf /etc/clash/ui
+    
+    rm -rf /lib/mosdns
+    rm -rf /etc/supervisor/conf.d/*
 
     echo "Uninstall successfully"
 
