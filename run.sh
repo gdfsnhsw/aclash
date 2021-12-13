@@ -249,6 +249,11 @@ function _install() {
     rm -rf /etc/clash/ui
     assert mv -f -T ui /etc/clash/ui
 
+    assert install -m 0644 supervisor/clash.conf /etc/supervisor/conf.d
+    assert install -m 0644 supervisor/mosdns.conf /etc/supervisor/conf.d
+    assert install -m 0644 supervisor/subconverter.conf /etc/supervisor/conf.d
+    assert install -m 0644 supervisor/supervisord.conf /etc/supervisor/supervisord.conf
+    
     if [ ! -f "/etc/subconverter" ];then
     tar -zxvf subconverter.tar.gz -C /etc/
     assert install -m 0644 subconverter/formyairport.ini /etc/subconverter/profiles
