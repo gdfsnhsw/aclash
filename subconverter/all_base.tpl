@@ -230,5 +230,13 @@ dns:
   # nameserver-policy:
   #   'www.baidu.com': '114.114.114.114'
   #   '+.internal.crop.com': '10.0.0.1'
-
+{% endif %}
+{% if local.clash.new_field_name == "true" %}
+proxies: ~
+proxy-groups: ~
+rules: ~
+{% else %}
+Proxy: ~
+Proxy Group: ~
+Rule: ~
 {% endif %}
