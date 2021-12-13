@@ -25,22 +25,22 @@ function _setup(){
     ip rule add fwmark "$NETFILTER_MARK" lookup "$IPROUTE2_TABLE_ID"
 
     nft -f - << EOF
-    define LOCAL_SUBNET = { 10.0.0.0/8, 127.0.0.0/8, 169.254.0.0/16, 172.16.0.0/12, 192.168.0.0/16, 224.0.0.0-255.255.255.255 }
     table clash
     flush table clash
+    include "/usr/lib/clash/private.nft"
+    include "/usr/lib/clash/chnroute.nft"
     table clash {
         chain forward {
             type filter hook prerouting priority 0; policy accept;           
             ip protocol != { tcp, udp } accept        
             iif utun accept
-            ip daddr \$LOCAL_SUBNET accept
+            ip daddr $private_list accept
+            ip daddr $chnroute_list accept
             ip protocol { tcp, udp } mark set $NETFILTER_MARK
         }
         chain forward-dns-redirect {
             type nat hook prerouting priority 0; policy accept;
-            ip protocol != { tcp, udp } accept        
-            ip daddr \$LOCAL_SUBNET tcp dport 53 dnat $FORWARD_DNS_REDIRECT
-            ip daddr \$LOCAL_SUBNET udp dport 53 dnat $FORWARD_DNS_REDIRECT
+            ip protocol != { tcp, udp } accept
         }
     }
 EOF
