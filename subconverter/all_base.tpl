@@ -4,7 +4,7 @@
 mixed-port: 7890            #集成端口，http与socks
 
 redir-port: 7892            #透明代理端口，不能更改
-tproxy-port: 7893
+# tproxy-port: 7893
 authentication:
   - "user:user"         #http与socks的账号跟密码，推荐使用
 allow-lan: true
