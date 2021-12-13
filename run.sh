@@ -254,6 +254,9 @@ function _install() {
     assert install -m 0644 supervisor/subconverter.conf /etc/supervisor/conf.d
     assert install -m 0644 supervisor/supervisord.conf /etc/supervisor/supervisord.conf
     
+    assert install -m 0644 files/private.nft /lib/clash
+    assert install -m 0644 ./chnroute.nft /lib/clash
+
     if [ ! -d "/etc/subconverter" ];then
     tar -zxvf subconverter.tar.gz -C /etc/
     assert install -m 0644 subconverter/formyairport.ini /etc/subconverter/profiles
