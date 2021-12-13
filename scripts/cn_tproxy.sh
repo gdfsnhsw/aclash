@@ -68,7 +68,7 @@ EOF
 function _help() {
     echo "nftables rule for clash CN_TPROXY mode"
     echo ""
-    echo "Usage: ./tproxy.sh [option]"
+    echo "Usage: ./cn_tproxy.sh [option]"
     echo ""
     echo "Options:"
     echo "  setup   - setup nftables rules"
