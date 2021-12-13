@@ -21,31 +21,11 @@ function _setup(){
 
     ip route replace local default dev lo table 114
 
-    ip rule del fwmark "$NETFILTER_MARK" lookup 114 > /dev/null 2> /dev/null
-    ip rule add fwmark "$NETFILTER_MARK" lookup 114
-
-    nft -f - << EOF
-    table clash
-    flush table clash
+    ip rule del fwmark 114514 lookup 114 > /dev/null 2> /dev/null
+    ip rule add fwmark 114514 lookup 114
     
-    include "/usr/lib/clash/private.nft"
-    include "/usr/lib/clash/chnroute.nft"
+    nft -f /usr/lib/clash/cn_tproxy.conf
     
-    table clash {
-        chain forward {
-            type filter hook prerouting priority 0; policy accept;
-            ip protocol != { tcp, udp } accept
-            ip daddr $private_list accept
-            ip daddr $chnroute_list accep
-            ip protocol tcp mark set 114514 tproxy to 127.0.0.1:7893
-            ip protocol udp mark set 114514 tproxy to 127.0.0.1:7893
-        }
-        chain forward-dns-redirect {
-            type nat hook prerouting priority 0; policy accept;
-            ip protocol != { tcp, udp } accept
-        }
-    }
-EOF
     sysctl -w net/ipv4/ip_forward=1
 
     exit 0
