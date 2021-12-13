@@ -19,10 +19,10 @@ function assert_command() {
 function _setup(){
     . /etc/default/clash
 
-    ip route replace local default dev lo table "$IPROUTE2_TABLE_ID"
+    ip route replace local default dev lo table 114
 
-    ip rule del fwmark "$NETFILTER_MARK" lookup "$IPROUTE2_TABLE_ID" > /dev/null 2> /dev/null
-    ip rule add fwmark "$NETFILTER_MARK" lookup "$IPROUTE2_TABLE_ID"
+    ip rule del fwmark "$NETFILTER_MARK" lookup 114 > /dev/null 2> /dev/null
+    ip rule add fwmark "$NETFILTER_MARK" lookup 114
 
     nft -f - << EOF
     table clash
@@ -37,8 +37,8 @@ function _setup(){
             ip protocol != { tcp, udp } accept
             ip daddr $private_list accept
             ip daddr $chnroute_list accep
-            ip protocol tcp mark set $NETFILTER_MARK tproxy to 127.0.0.1$FORWARD_PROXY_REDIRECT
-            ip protocol udp mark set $NETFILTER_MARK tproxy to 127.0.0.1$FORWARD_PROXY_REDIRECT
+            ip protocol tcp mark set 114514 tproxy to 127.0.0.1:7893
+            ip protocol udp mark set 114514 tproxy to 127.0.0.1:7893
         }
         chain forward-dns-redirect {
             type nat hook prerouting priority 0; policy accept;
@@ -54,8 +54,8 @@ EOF
 function _clean(){
     . /etc/default/clash
 
-    ip route del local default dev lo table "$IPROUTE2_TABLE_ID"
-    ip rule del fwmark "$NETFILTER_MARK" lookup "$IPROUTE2_TABLE_ID"
+    ip route del local default dev lo table 114
+    ip rule del fwmark 114514 lookup 114
 
     nft -f - << EOF
     flush table clash
