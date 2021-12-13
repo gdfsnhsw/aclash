@@ -85,9 +85,8 @@ function _download() {
 #     assert mv -f -T clash-dashboard-gh-pages ui
 
     echo "Clash Premium core & dashboard have been downloaded successfully "
-    
 
-#yq 
+# yq 
 
     yq_url="https://api.github.com/repos/mikefarah/yq/releases/latest"
     echo "Get yq_release.json"
@@ -113,6 +112,84 @@ function _download() {
     fi
     assert cp yq /usr/bin/yq
     assert chmod +x /usr/bin/yq
+
+# mosdns 
+
+    mosdns_url="https://api.github.com/repos/IrineSistiana/mosdns/releases/latest"
+    echo "Get mosdns_release.json"
+    assert curl -s -o mosdns_release.json "${mosdns_url}"
+
+    if [ ! -f mosdns_release.json ]; then
+        echo "Failed to get mosdns release information"
+        exit 1
+    fi
+
+    mosdns_download_url=$(jq ".assets[${i}].browser_download_url" mosdns_release.json | tr -d '"' | grep -m1 ${AARCH})
+    if [ "${mosdns_download_url}" == "" ]; then
+        echo "No compatible mosdns for your platform"
+        exit 1
+    fi
+
+    echo "Start download mosdns from ${mosdns_download_url}"
+    assert curl -L -# -o mosdns.zip "${url_prefix}${mosdns_download_url}"
+    if [ ! -f mosdns.zip ]; then
+        echo "Failed to download mosdns"
+        echo "Please download and upload it to current directory manually"
+        exit 1
+    fi
+    assert unzip -o  mosdns.zip "mosdns"
+
+    geoip_download_url="https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat"
+    echo "Start download geoip.dat from ${geoip_download_url}"
+    assert curl -L -# -O ${url_prefix}${geoip_download_url}
+    if [ ! -f geoip.dat ]; then
+        echo "Failed to download geoip.dat"
+        exit 1
+    fi
+
+    geosite_download_url="https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat"
+    echo "Start download geosite.dat from ${geosite_download_url}"
+    assert curl -L -# -O ${url_prefix}${geosite_download_url}
+    if [ ! -f geosite.dat ]; then
+        echo "Failed to download geosite.dat"
+        exit 1
+    fi
+
+# subconverter 
+
+    subconverter_url="https://api.github.com/repos/tindy2013/subconverter/releases/latest"
+    echo "Get subconverter_release.json"
+    assert curl -s -o subconverter_release.json "${subconverter_url}"
+
+    if [ ! -f subconverter_release.json ]; then
+        echo "Failed to get subconverter release information"
+        exit 1
+    fi
+
+    subconverter_download_url=$(jq ".assets[${i}].browser_download_url" subconverter_release.json | tr -d '"' | grep -m1 linux64)
+    if [ "${subconverter_download_url}" == "" ]; then
+        echo "No compatible subconverter for your platform"
+        exit 1
+    fi
+
+    echo "Start download subconverter from ${subconverter_download_url}"
+    assert curl -L -# -o subconverter.tar.gz "${url_prefix}${subconverter_download_url}"
+    if [ ! -f subconverter.tar.gz ]; then
+        echo "Failed to download subconverter"
+        echo "Please download and upload it to current directory manually"
+        exit 1
+    fi
+
+# chnroute.nft 
+
+    chnroute_download_url="http://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest"
+    echo "Start download chnroute.nft from ${chnroute_download_url}"
+    curl -# "${chnroute_download_url}" > raw
+    echo "define chnroute_list = {" > chnroute.nft
+    cat raw | grep ipv4 | grep CN | awk -F\| '{ printf("%s/%d\n", $4, 32-log($5)/log(2)) }' | sed s/$/,/g >> chnroute.nft
+    echo "}" >> chnroute.nft
+
+
     exit 1
 }
 
@@ -261,3 +338,4 @@ case "$1" in
 "uninstall") _uninstall $1;;
 *) _help;
 esac
+
