@@ -254,7 +254,7 @@ function _install() {
     assert install -m 0644 supervisor/subconverter.conf /etc/supervisor/conf.d
     assert install -m 0644 supervisor/supervisord.conf /etc/supervisor/supervisord.conf
     
-    if [ ! -f "/etc/subconverter" ];then
+    if [ ! -d "/etc/subconverter" ];then
     tar -zxvf subconverter.tar.gz -C /etc/
     assert install -m 0644 subconverter/formyairport.ini /etc/subconverter/profiles
     assert install -m 0644 subconverter/Loyalsoldier.ini /etc/subconverter/profiles
@@ -263,7 +263,7 @@ function _install() {
     fi
 
     assert install -m 0755 ./mosdns /bin/mosdns
-    if [ ! -f "/etc/mosdns" ];then
+    if [ ! -d "/etc/mosdns" ];then
     mkdir /etc/mosdns
     assert install -m 0644 ./geoip.dat /etc/mosdns
     assert install -m 0644 ./geosite.dat /etc/mosdns
