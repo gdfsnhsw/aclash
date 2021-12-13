@@ -369,6 +369,8 @@ case "$1" in
 "dl_proxy") _download $1;;
 "tun") _install $1;;
 "tproxy") _install $1;;
+"cn_tun") _install $1;;
+"cn_tproxy") _install $1;;
 "uninstall") _uninstall $1;;
 *) _help;
 esac
