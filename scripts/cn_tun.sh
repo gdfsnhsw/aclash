@@ -19,31 +19,12 @@ function assert_command() {
 function _setup(){
     . /etc/default/clash
 
-    ip route replace default dev utun table "$IPROUTE2_TABLE_ID"
+    ip route replace default dev utun table 114
 
-    ip rule del fwmark "$NETFILTER_MARK" lookup "$IPROUTE2_TABLE_ID" > /dev/null 2> /dev/null
-    ip rule add fwmark "$NETFILTER_MARK" lookup "$IPROUTE2_TABLE_ID"
+    ip rule del fwmark 114514 lookup 114 > /dev/null 2> /dev/null
+    ip rule add fwmark 114514 lookup 114
 
-    nft -f - << EOF
-    table clash
-    flush table clash
-    include "/usr/lib/clash/private.nft"
-    include "/usr/lib/clash/chnroute.nft"
-    table clash {
-        chain forward {
-            type filter hook prerouting priority 0; policy accept;           
-            ip protocol != { tcp, udp } accept        
-            iif utun accept
-            ip daddr $private_list accept
-            ip daddr $chnroute_list accept
-            ip protocol { tcp, udp } mark set $NETFILTER_MARK
-        }
-        chain forward-dns-redirect {
-            type nat hook prerouting priority 0; policy accept;
-            ip protocol != { tcp, udp } accept
-        }
-    }
-EOF
+    nft -f /usr/lib/clash/cn_tun.conf
 
     sysctl -w net/ipv4/ip_forward=1
 
@@ -54,8 +35,8 @@ EOF
 function _clean(){
     . /etc/default/clash
 
-    ip route del default dev utun table "$IPROUTE2_TABLE_ID"
-    ip rule del fwmark "$NETFILTER_MARK" lookup "$IPROUTE2_TABLE_ID"
+    ip route del default dev utun table 114
+    ip rule del fwmark 114514 lookup 114
 
     nft -f - << EOF
     flush table clash
