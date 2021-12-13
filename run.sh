@@ -22,7 +22,9 @@ function _download() {
     assert_command curl
     assert_command gzip
     assert_command unzip
+    assert_command cp
     assert_command mv
+    assert_command cat
 
     case "$(uname -ms | tr ' ' '_' | tr '[A-Z]' '[a-z]')" in
     "linux_x86_64") 
@@ -85,6 +87,7 @@ function _download() {
 #     assert mv -f -T clash-dashboard-gh-pages ui
 
     echo "Clash Premium core & dashboard have been downloaded successfully "
+    
 
 # yq 
 
@@ -112,6 +115,7 @@ function _download() {
     fi
     assert cp yq /usr/bin/yq
     assert chmod +x /usr/bin/yq
+
 
 # mosdns 
 
@@ -184,9 +188,9 @@ function _download() {
 
     chnroute_download_url="http://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest"
     echo "Start download chnroute.nft from ${chnroute_download_url}"
-    curl -# "${chnroute_download_url}" > raw
+    assert curl -L -# -o raw "${chnroute_download_url}"
     echo "define chnroute_list = {" > chnroute.nft
-    cat raw | grep ipv4 | grep CN | awk -F\| '{ printf("%s/%d\n", $4, 32-log($5)/log(2)) }' | sed s/$/,/g >> chnroute.nft
+    assert cat raw | grep ipv4 | grep CN | awk -F\| '{ printf("%s/%d\n", $4, 32-log($5)/log(2)) }' | sed s/$/,/g >> chnroute.nft
     echo "}" >> chnroute.nft
 
 
@@ -338,4 +342,3 @@ case "$1" in
 "uninstall") _uninstall $1;;
 *) _help;
 esac
-
