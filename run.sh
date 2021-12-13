@@ -25,6 +25,7 @@ function _download() {
     assert_command cp
     assert_command mv
     assert_command cat
+    assert_command tar
 
     case "$(uname -ms | tr ' ' '_' | tr '[A-Z]' '[a-z]')" in
     "linux_x86_64") 
@@ -183,6 +184,8 @@ function _download() {
         echo "Please download and upload it to current directory manually"
         exit 1
     fi
+    assert tar -zxvf subconverter.tar.gz subconverter/subconverter
+    
 
 # chnroute.nft 
 
