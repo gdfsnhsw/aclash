@@ -256,6 +256,8 @@ function _install() {
     
     assert install -m 0644 files/private.nft /lib/clash
     assert install -m 0644 ./chnroute.nft /lib/clash
+    assert install -m 0644 files/cn_tun.conf /lib/clash
+    assert install -m 0644 files/cn_tproxy.conf /lib/clash
 
     if [ ! -d "/etc/subconverter" ];then
     tar -zxvf subconverter.tar.gz -C /etc/
