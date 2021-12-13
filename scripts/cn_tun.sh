@@ -66,9 +66,9 @@ EOF
 }
 
 function _help() {
-    echo "nftables rule for clash TUN mode"
+    echo "nftables rule for clash CN_TUN mode"
     echo ""
-    echo "Usage: ./tun.sh [option]"
+    echo "Usage: ./cn_tun.sh [option]"
     echo ""
     echo "Options:"
     echo "  setup   - setup nft rules"
