@@ -1,135 +1,234 @@
 {% if request.target == "clash" or request.target == "clashr" %}
 
-# 系统参数
-mixed-port: 7890            #集成端口，http与socks
+# Port of HTTP(S) proxy server on the local end
+# port: 7890
 
-redir-port: 7892            #透明代理端口，不能更改
-# tproxy-port: 7893
+# Port of SOCKS5 proxy server on the local end
+# socks-port: 7891
+
+# Transparent proxy server port for Linux and macOS (Redirect TCP and TProxy UDP)
+# redir-port: 7892
+
+# Transparent proxy server port for Linux (TProxy TCP and TProxy UDP)
+tproxy-port: 7893
+
+# HTTP(S) and SOCKS4(A)/SOCKS5 server on the same port
+mixed-port: 7890
+
+# authentication of local SOCKS5/HTTP(S) server
 authentication:
-  - "user:user"         #http与socks的账号跟密码，推荐使用
-allow-lan: true
+ - "user:pass"
+#  - "user2:pass2"
+
+# Set to true to allow connections to the local-end server from
+# other LAN IP addresses
+allow-lan: false
+
+# This is only applicable when `allow-lan` is `true`
+# '*': bind all IP addresses
+# 192.168.122.11: bind a single IPv4 address
+# "[aaaa::a8aa:ff:fe09:57d8]": bind a single IPv6 address
+bind-address: '*'
+
+# Clash router working mode
+# rule: rule-based packet routing
+# global: all packets will be forwarded to a single endpoint
+# direct: directly forward the packets to the Internet
 mode: Script
+
+# Clash by default prints logs to STDOUT
+# info / warning / error / debug / silent
 log-level: debug
+
+# When set to false, resolver won't translate hostnames to IPv6 addresses
 ipv6: false
+
+# RESTful web API listening address
 external-controller: 0.0.0.0:9090
-external-ui: dashboard
-secret: ""                  #dashboard面板的密码，同时也是tracing的密码
-interface-name: eth0        #自行修改系统网卡名称
-profile:
-  store-selected: true      #策略组选择缓存开关，打开后可以保存策略组选择，重启不会回复默认
-  tracing: false             #tracing开关，必须打开才能对接tracing
 
+# A relative path to the configuration directory or an absolute path to a
+# directory in which you put some static web resource. Clash core will then
+# serve it at `http://{{external-controller}}/ui`.
+external-ui: ui
 
-# 实验性功能
-experimental:
-  ignore-resolve-fail: true
+# Secret for the RESTful API (optional)
+# Authenticate by spedifying HTTP header `Authorization: Bearer ${secret}`
+# ALWAYS set a secret if RESTful API is listening on 0.0.0.0
+secret: ""
 
-# TUN设置
-tun:
-  enable: true
-  stack: system # or gvisor
-  dns-hijack:
-    - tcp://8.8.8.8:53
-    - tcp://8.8.4.4:53
-    - udp://8.8.8.8:53
-    - udp://8.8.4.4:53
+# Outbound interface name
+interface-name: ens18
 
+# fwmark on Linux only
+routing-mark: 6666
+
+# Static hosts for DNS server and connection establishment (like /etc/hosts)
+#
+# Wildcard hostnames are supported (e.g. *.clash.dev, *.foo.*.example.com)
+# Non-wildcard domain names have a higher priority than wildcard domain names
+# e.g. foo.example.com > *.example.com > .example.com
+# P.S. +.foo.com equals to .foo.com and foo.com
 hosts:
+  # '*.clash.dev': 127.0.0.1
+  # '.dev': 127.0.0.1
+  # 'alpha.clash.dev': '::1'
   # Firebase Cloud Messaging
   'mtalk.google.com': 108.177.125.188
   # Google Dl
   'dl.google.com': 180.163.151.161
   'dl.l.google.com': 180.163.151.161
 
-# DNS设置  
+# TUN设置
+tun:
+  enable: true         
+  stack: system # or gvisor
+  dns-hijack:
+    - tcp://8.8.8.8:53
+    - tcp://8.8.4.4:53
+    - 8.8.8.8:53
+    - 8.8.4.4:53
+
+profile:
+  # Store the `select` results in $HOME/.config/clash/.cache
+  # set false If you don't want this behavior
+  # when two different configurations have groups with the same name, the selected values are shared
+  store-selected: false
+
+  # persistence fakeip
+  store-fake-ip: true
+
+# DNS server settings
+# This section is optional. When not present, the DNS server will be disabled.
 dns:
   enable: true
   ipv6: false
-  listen: 0.0.0.0:5352         # DNS监听端口！！！clash下，此处不能改，切记！！！！
-  # DNS解析模式（redir-host # or fake-ip），这里重点解释一下：
-  # redir-host为真实IP模式，需要设置nameserver（国内）和fallback（国外）两组DNS，当设备发起DNS请求，CLASH会同时向两组里面所有服务器发起请求，然后首先拿nameserver中最快返回的结果去匹配规则，使用GEOIP判断此IP的所属区域，如果属于国内（CN）或保留地址则直接响应给客户端，其他情况则把fallback中的结果响应给客户端
-  # fake-ip则相反，当clash收到请求，会直接返回一个198.18.0.1/16的假IP给设备，同时 Clash 继续解析域名规则和 IP 规则，而且如果 Clash DNS 匹配到了域名规则、则不需要向上游 DNS 请求，Clash 已经可以直接将连接发给代理服务器，节省了 Clash DNS 向上游 DNS 请求解析
+  listen: 0.0.0.0:5352
+  # ipv6: false # when the false, response to AAAA questions will be empty
+
+  # These nameservers are used to resolve the DNS nameserver hostnames below.
+  # Specify IP addresses only
   default-nameserver:
     - 223.5.5.5
-   # 理论上来说，fake-ip具有更好的响应速度跟抗污染能力（主要还得看规则）。由于灯塔提前分流了国内外流量，国内流量不经过clash，所以选择fake-ip可以得到更好的效果，当然，还是得看规则完不完整。有需要返回真实IP的可以选择redir-host，老实说两种DNS模式在实际体验中差别不大
-{% if request.dns_mode == "redir-host" %}
-  enhanced-mode: redir-host
-{% else %}
-  enhanced-mode: fake-ip
-{% endif %} 
-  fake-ip-range: 198.18.0.1/16   # ip范围
-  use-hosts: true                # 开启
-  fake-ip-filter:                # fake-ip白名单，对于有需要返回真实IP又想用fake-ip的，可参照以下格式把域名加进去
-    # === LAN ===
-    - '*.lan'
-    - '*.localdomain'
-    - '*.example'
-    - '*.invalid'
-    - '*.localhost'
-    - '*.test'
-    - '*.local'
-    - '*.home.arpa'
-    # === Linksys Wireless Router ===
-    - '*.linksys.com'
-    - '*.linksyssmartwifi.com'
-    # === ASUS Router ===
-    - '*.router.asus.com'
-    # === Apple Software Update Service ===
-    - 'swscan.apple.com'
-    - 'mesu.apple.com'
-    # === Windows 10 Connnect Detection ===
-    - '*.msftconnecttest.com'
-    - '*.msftncsi.com'
-    - 'msftconnecttest.com'
-    - 'msftncsi.com'
-    # === Google ===
-    - 'lens.l.google.com'
-    - 'stun.l.google.com'
-    ## Golang
-    - 'proxy.golang.org'
-    # === NTP Service ===
-    - 'time.*.com'
-    - 'time.*.gov'
-    - 'time.*.edu.cn'
-    - 'time.*.apple.com'
-    - 'time1.*.com'
-    - 'time2.*.com'
-    - 'time3.*.com'
-    - 'time4.*.com'
-    - 'time5.*.com'
-    - 'time6.*.com'
-    - 'time7.*.com'
-    - 'ntp.*.com'
-    - 'ntp1.*.com'
-    - 'ntp2.*.com'
-    - 'ntp3.*.com'
-    - 'ntp4.*.com'
-    - 'ntp5.*.com'
-    - 'ntp6.*.com'
-    - 'ntp7.*.com'
-    - '*.time.edu.cn'
-    - '*.ntp.org.cn'
-    - '+.pool.ntp.org'
-    - 'time1.cloud.tencent.com'
-    # === Game Service ===
-    ## Nintendo Switch
-    - '+.srv.nintendo.net'
-    ## Sony PlayStation
-    - '+.stun.playstation.net'
-    ## Microsoft Xbox
-    - 'xbox.*.microsoft.com'
-    - 'xnotify.xboxlive.com'
-    # === Other ===
-    ## QQ Quick Login
-    - 'localhost.ptlogin2.qq.com'
-    - 'localhost.sec.qq.com'
-    ## STUN Server
-    - 'stun.*.*'
-    - 'stun.*.*.*'
-    - '+.stun.*.*'
-    - '+.stun.*.*.*'
-    - '+.stun.*.*.*.*'
-  nameserver:                    # DNS服务器（国内），此处建议只填一个速度最快的DNS就可以了
+  enhanced-mode: fake-ip # or redir-host
+  fake-ip-range: 198.18.0.1/16 # Fake IP addresses pool CIDR
+  use-hosts: true # lookup hosts and return IP record
+  
+  # Hostnames in this list will not be resolved with fake IPs
+  # i.e. questions to these domain names will always be answered with their
+  # real IP addresses
+  fake-ip-filter:
+    - "*.lan"
+    - time.windows.com
+    - time.nist.gov
+    - time.apple.com
+    - time.asia.apple.com
+    - "*.ntp.org.cn"
+    - "*.openwrt.pool.ntp.org"
+    - time1.cloud.tencent.com
+    - time.ustc.edu.cn
+    - pool.ntp.org
+    - ntp.ubuntu.com
+    - ntp.aliyun.com
+    - ntp1.aliyun.com
+    - ntp2.aliyun.com
+    - ntp3.aliyun.com
+    - ntp4.aliyun.com
+    - ntp5.aliyun.com
+    - ntp6.aliyun.com
+    - ntp7.aliyun.com
+    - time1.aliyun.com
+    - time2.aliyun.com
+    - time3.aliyun.com
+    - time4.aliyun.com
+    - time5.aliyun.com
+    - time6.aliyun.com
+    - time7.aliyun.com
+    - "*.time.edu.cn"
+    - time1.apple.com
+    - time2.apple.com
+    - time3.apple.com
+    - time4.apple.com
+    - time5.apple.com
+    - time6.apple.com
+    - time7.apple.com
+    - time1.google.com
+    - time2.google.com
+    - time3.google.com
+    - time4.google.com
+    - music.163.com
+    - "*.music.163.com"
+    - "*.126.net"
+    - musicapi.taihe.com
+    - music.taihe.com
+    - songsearch.kugou.com
+    - trackercdn.kugou.com
+    - "*.kuwo.cn"
+    - api-jooxtt.sanook.com
+    - api.joox.com
+    - joox.com
+    - y.qq.com
+    - "*.y.qq.com"
+    - streamoc.music.tc.qq.com
+    - mobileoc.music.tc.qq.com
+    - isure.stream.qqmusic.qq.com
+    - dl.stream.qqmusic.qq.com
+    - aqqmusic.tc.qq.com
+    - amobile.music.tc.qq.com
+    - "*.xiami.com"
+    - "*.music.migu.cn"
+    - music.migu.cn
+    - "*.msftconnecttest.com"
+    - "*.msftncsi.com"
+    - localhost.ptlogin2.qq.com
+    - "+.srv.nintendo.net"
+    - "+.stun.playstation.net"
+    - xbox.*.microsoft.com
+    - "+.xboxlive.com"
+    - stun.*.*
+    - stun.*.*.*
+  
+  # Supports UDP, TCP, DoT, DoH. You can specify the port to connect to.
+  # All DNS questions are sent directly to the nameserver, without proxies
+  # involved. Clash answers the DNS question with the first result gathered.
+  nameserver:
     - 223.5.5.5
+    # - 114.114.114.114 # default value
+    # - 8.8.8.8 # default value
+    # - tls://dns.rubyfish.cn:853 # DNS over TLS
+    # - https://1.1.1.1/dns-query # DNS over HTTPS
+    # - dhcp://en0 # dns from dhcp
+
+  # When `fallback` is present, the DNS server will send concurrent requests
+  # to the servers in this section along with servers in `nameservers`.
+  # The answers from fallback servers are used when the GEOIP country
+  # is not `CN`.
+  # fallback:
+  #   - tcp://1.1.1.1
+
+  # If IP addresses resolved with servers in `nameservers` are in the specified
+  # subnets below, they are considered invalid and results from `fallback`
+  # servers are used instead.
+  #
+  # IP address resolved with servers in `nameserver` is used when
+  # `fallback-filter.geoip` is true and when GEOIP of the IP address is `CN`.
+  #
+  # If `fallback-filter.geoip` is false, results from `nameserver` nameservers
+  # are always used if not match `fallback-filter.ipcidr`.
+  #
+  # This is a countermeasure against DNS pollution attacks.
+  # fallback-filter:
+  #   geoip: true
+  #   geoip-code: CN
+  #   ipcidr:
+  #     - 240.0.0.0/4
+  #   domain:
+  #     - '+.google.com'
+  #     - '+.facebook.com'
+  #     - '+.youtube.com'
+  
+  # Lookup domains via specific nameservers
+  # nameserver-policy:
+  #   'www.baidu.com': '114.114.114.114'
+  #   '+.internal.crop.com': '10.0.0.1'
 
 {% endif %}
