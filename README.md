@@ -10,11 +10,6 @@ Simple clash premiun core installer with full tun support for Linux.
    apt install -y git nftables iproute2 jq supervisor
    ```
 
-   ```bash
-   wget https://ghproxy.com/https://github.com/mikefarah/yq/releases/download/v4.16.1/yq_linux_amd64 -O /usr/bin/yq &&\
-    chmod +x /usr/bin/yq
-   ```
-
 2. Clone repository
 
    ```bash
