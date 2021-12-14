@@ -26,26 +26,34 @@ Simple clash premiun core installer with full tun support for Linux.
    
    # core
    ```bash
-   ./run.sh dl            # Download latest clash premium & dashboard
+   ./run.sh dl
    ```
    
    ```bash
-   ./run.sh dl_proxy      # Download latest clash premium & dashboard with proxy
+   ./run.sh dl_proxy
    ```
 
    # install
    ```bash
-   ./run.sh tun           # Transfer TCP and UDP to utun device
+   ./run.sh redir-tun
+   ```
+
+```bash
+   ./run.sh tun
    ```
    
    ```bash
-   ./run.sh tproxy        # TProxy TCP and TProxy UDP
+   ./run.sh tproxy
+   ```
+
+   ```bash
+   ./run.sh cn_redir-tun
    ```
 
    ```bash
    ./run.sh cn_tun
    ```
-   
+
    ```bash
    ./run.sh cn_tproxy
    ```
