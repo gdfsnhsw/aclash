@@ -78,14 +78,14 @@ function _download() {
 
     clash_dashboard_download_url="https://github.com/Dreamacro/clash-dashboard/archive/gh-pages.zip"
     echo "Start download Clash Dashboard from ${clash_dashboard_download_url}"
-    assert curl -L -# -o ui.zip "${url_prefix}${clash_dashboard_download_url}"
+    assert curl -L -# -o dashboard.zip "${url_prefix}${clash_dashboard_download_url}"
     if [ ! -f ui.zip ]; then
         echo "Failed to download Clash Dashboard"
         echo "Please download and upload it to current directory manually"
         exit 1
     fi
-#     assert unzip ui.zip
-#     assert mv -f -T clash-dashboard-gh-pages ui
+#     assert unzip dashboard.zip
+#     assert mv -f -T clash-dashboard-gh-pages dashboard
 
     echo "Clash Premium core & dashboard have been downloaded successfully "
     
@@ -244,10 +244,10 @@ function _install() {
 
     assert install -m 0644 files/clash.service /etc/systemd/system/clash.service
     assert install -m 0644 files/99-clash.rules /etc/udev/rules.d/99-clash.rules
-    assert unzip ui.zip
-    assert mv -f -T clash-dashboard-gh-pages ui
-    rm -rf /etc/clash/ui
-    assert mv -f -T ui /etc/clash/ui
+    assert unzip dashboard.zip
+    assert mv -f -T clash-dashboard-gh-pages dashboard
+    rm -rf /etc/clash/dashboard
+    assert mv -f -T dashboard /etc/clash/dashboard
 
     assert install -m 0644 supervisor/clash.conf /etc/supervisor/conf.d
     assert install -m 0644 supervisor/mosdns.conf /etc/supervisor/conf.d
