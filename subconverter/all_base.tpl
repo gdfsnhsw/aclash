@@ -1,73 +1,27 @@
 {% if request.target == "clash" or request.target == "clashr" %}
 
-# Port of HTTP(S) proxy server on the local end
-# port: 7890
-
-# Port of SOCKS5 proxy server on the local end
-# socks-port: 7891
-
-# Transparent proxy server port for Linux and macOS (Redirect TCP and TProxy UDP)
-# redir-port: 7892
-
-# Transparent proxy server port for Linux (TProxy TCP and TProxy UDP)
-tproxy-port: 7893
-
-# HTTP(S) and SOCKS4(A)/SOCKS5 server on the same port
-mixed-port: 7890
-
-# authentication of local SOCKS5/HTTP(S) server
+# 系统参数
+mixed-port: 7891            #集成端口，http与socks
+redir-port: 7892            #透明代理端口，不能更改
+tproxy-port: 7893           #tproxy端口
 authentication:
- - "user:pass"
-#  - "user2:pass2"
-
-# Set to true to allow connections to the local-end server from
-# other LAN IP addresses
-allow-lan: false
-
-# This is only applicable when `allow-lan` is `true`
-# '*': bind all IP addresses
-# 192.168.122.11: bind a single IPv4 address
-# "[aaaa::a8aa:ff:fe09:57d8]": bind a single IPv6 address
+  - "user:pass"   		   #http与socks的账号跟密码，推荐使用
+allow-lan: true
 bind-address: '*'
-
-# Clash router working mode
-# rule: rule-based packet routing
-# global: all packets will be forwarded to a single endpoint
-# direct: directly forward the packets to the Internet
 mode: Script
-
-# Clash by default prints logs to STDOUT
-# info / warning / error / debug / silent
-log-level: debug
-
-# When set to false, resolver won't translate hostnames to IPv6 addresses
+log-level: info
 ipv6: false
-
-# RESTful web API listening address
 external-controller: 0.0.0.0:9090
-
-# A relative path to the configuration directory or an absolute path to a
-# directory in which you put some static web resource. Clash core will then
-# serve it at `http://{{external-controller}}/ui`.
-external-ui: ui
-
-# Secret for the RESTful API (optional)
-# Authenticate by spedifying HTTP header `Authorization: Bearer ${secret}`
-# ALWAYS set a secret if RESTful API is listening on 0.0.0.0
-secret: ""
-
-# Outbound interface name
+external-ui: dashboard
+secret: ""                  #dashboard面板的密码，同时也是tracing的密码
 interface-name: ens18
-
-# fwmark on Linux only
 routing-mark: 6666
+profile:
+  store-selected: true      #策略组选择缓存开关，打开后可以保存策略组选择，重启不会回复默认
+  tracing: true             #tracing开关，必须打开才能对接tracing
+  store-fake-ip: true       #持久化fake-ip
 
-# Static hosts for DNS server and connection establishment (like /etc/hosts)
-#
-# Wildcard hostnames are supported (e.g. *.clash.dev, *.foo.*.example.com)
-# Non-wildcard domain names have a higher priority than wildcard domain names
-# e.g. foo.example.com > *.example.com > .example.com
-# P.S. +.foo.com equals to .foo.com and foo.com
+hosts:
 hosts:
   # '*.clash.dev': 127.0.0.1
   # '.dev': 127.0.0.1
@@ -81,162 +35,132 @@ hosts:
 # TUN设置
 tun:
   enable: true         
-  stack: system # or gvisor
+  stack: system
   dns-hijack:
-    - tcp://8.8.8.8:53
-    - tcp://8.8.4.4:53
-    - 8.8.8.8:53
-    - 8.8.4.4:53
+    - 22.0.0.2:53
+#    - tcp://8.8.8.8:53
+#    - tcp://8.8.4.4:53
+#    - 8.8.8.8:53
+#    - 8.8.4.4:53
 
-profile:
-  # Store the `select` results in $HOME/.config/clash/.cache
-  # set false If you don't want this behavior
-  # when two different configurations have groups with the same name, the selected values are shared
-  store-selected: false
-
-  # persistence fakeip
-  store-fake-ip: true
-
-# DNS server settings
-# This section is optional. When not present, the DNS server will be disabled.
+# DNS设置  
 dns:
   enable: true
   ipv6: false
-  listen: 0.0.0.0:5352
-  # ipv6: false # when the false, response to AAAA questions will be empty
-
-  # These nameservers are used to resolve the DNS nameserver hostnames below.
-  # Specify IP addresses only
+  listen: 127.0.0.1:5352
   default-nameserver:
     - 223.5.5.5
-  enhanced-mode: fake-ip # or redir-host
-  fake-ip-range: 198.18.0.1/16 # Fake IP addresses pool CIDR
-  use-hosts: true # lookup hosts and return IP record
-  
-  # Hostnames in this list will not be resolved with fake IPs
-  # i.e. questions to these domain names will always be answered with their
-  # real IP addresses
+    - 8.8.8.8
+  enhanced-mode: fake-ip
+  fake-ip-range: 22.0.0.0/8
+  use-hosts: true
   fake-ip-filter:
-    - "*.lan"
-    - time.windows.com
-    - time.nist.gov
-    - time.apple.com
-    - time.asia.apple.com
-    - "*.ntp.org.cn"
-    - "*.openwrt.pool.ntp.org"
-    - time1.cloud.tencent.com
-    - time.ustc.edu.cn
-    - pool.ntp.org
-    - ntp.ubuntu.com
-    - ntp.aliyun.com
-    - ntp1.aliyun.com
-    - ntp2.aliyun.com
-    - ntp3.aliyun.com
-    - ntp4.aliyun.com
-    - ntp5.aliyun.com
-    - ntp6.aliyun.com
-    - ntp7.aliyun.com
-    - time1.aliyun.com
-    - time2.aliyun.com
-    - time3.aliyun.com
-    - time4.aliyun.com
-    - time5.aliyun.com
-    - time6.aliyun.com
-    - time7.aliyun.com
-    - "*.time.edu.cn"
-    - time1.apple.com
-    - time2.apple.com
-    - time3.apple.com
-    - time4.apple.com
-    - time5.apple.com
-    - time6.apple.com
-    - time7.apple.com
-    - time1.google.com
-    - time2.google.com
-    - time3.google.com
-    - time4.google.com
-    - music.163.com
-    - "*.music.163.com"
-    - "*.126.net"
-    - musicapi.taihe.com
-    - music.taihe.com
-    - songsearch.kugou.com
-    - trackercdn.kugou.com
-    - "*.kuwo.cn"
-    - api-jooxtt.sanook.com
-    - api.joox.com
-    - joox.com
-    - y.qq.com
-    - "*.y.qq.com"
-    - streamoc.music.tc.qq.com
-    - mobileoc.music.tc.qq.com
-    - isure.stream.qqmusic.qq.com
-    - dl.stream.qqmusic.qq.com
-    - aqqmusic.tc.qq.com
-    - amobile.music.tc.qq.com
-    - "*.xiami.com"
-    - "*.music.migu.cn"
-    - music.migu.cn
-    - "*.msftconnecttest.com"
-    - "*.msftncsi.com"
-    - localhost.ptlogin2.qq.com
-    - "+.srv.nintendo.net"
-    - "+.stun.playstation.net"
-    - xbox.*.microsoft.com
-    - "+.xboxlive.com"
-    - stun.*.*
-    - stun.*.*.*
-  
-  # Supports UDP, TCP, DoT, DoH. You can specify the port to connect to.
-  # All DNS questions are sent directly to the nameserver, without proxies
-  # involved. Clash answers the DNS question with the first result gathered.
+    # === LAN ===
+    - '*.example'
+    - '*.home.arpa'
+    - '*.invalid'
+    - '*.lan'
+    - '*.local'
+    - '*.localdomain'
+    - '*.localhost'
+    - '*.test'
+    # === Apple Software Update Service ===
+    - 'mesu.apple.com'
+    - 'swscan.apple.com'
+    # === ASUS Router ===
+    - '*.router.asus.com'
+    # === Google ===
+    - 'lens.l.google.com'
+    - 'stun.l.google.com'
+    ## Golang
+    - 'proxy.golang.org'
+    # === Linksys Wireless Router ===
+    - '*.linksys.com'
+    - '*.linksyssmartwifi.com'
+    # === Windows 10 Connnect Detection ===
+    - '*.ipv6.microsoft.com'
+    - '*.msftconnecttest.com'
+    - '*.msftncsi.com'
+    - 'msftconnecttest.com'
+    - 'msftncsi.com'
+    # === NTP Service ===
+    - 'ntp.*.com'
+    - 'ntp1.*.com'
+    - 'ntp2.*.com'
+    - 'ntp3.*.com'
+    - 'ntp4.*.com'
+    - 'ntp5.*.com'
+    - 'ntp6.*.com'
+    - 'ntp7.*.com'
+    - 'time.*.apple.com'
+    - 'time.*.com'
+    - 'time.*.gov'
+    - 'time1.*.com'
+    - 'time2.*.com'
+    - 'time3.*.com'
+    - 'time4.*.com'
+    - 'time5.*.com'
+    - 'time6.*.com'
+    - 'time7.*.com'
+    - 'time.*.edu.cn'
+    - '*.time.edu.cn'
+    - '*.ntp.org.cn'
+    - '+.pool.ntp.org'
+    - 'time1.cloud.tencent.com'
+    # === Game Service ===
+    ## Microsoft Xbox
+    - 'speedtest.cros.wr.pvp.net'
+    - '*.*.xboxlive.com'
+    - 'xbox.*.*.microsoft.com'
+    - 'xbox.*.microsoft.com'
+    - 'xnotify.xboxlive.com'
+    ## Nintendo Switch
+    - '*.*.*.srv.nintendo.net'
+    - '+.srv.nintendo.net'
+    ## Sony PlayStation
+    - '*.*.stun.playstation.net'
+    - '+.stun.playstation.net'
+    ## STUN Server
+    - '+.stun.*.*.*.*'
+    - '+.stun.*.*.*'
+    - '+.stun.*.*'
+    - 'stun.*.*.*'
+    - 'stun.*.*'
+    # === Music Service ===
+    ## 咪咕音乐
+    - '*.music.migu.cn'
+    - 'music.migu.cn'
+    ## 太和音乐
+    - 'music.taihe.com'
+    - 'musicapi.taihe.com'
+    ## 腾讯音乐
+    - 'songsearch.kugou.com'
+    - 'trackercdn.kugou.com'
+    - '*.kuwo.cn'
+    - 'api-jooxtt.sanook.com'
+    - 'api.joox.com'
+    - 'joox.com'
+    - 'y.qq.com'
+    - '*.y.qq.com'
+    - 'amobile.music.tc.qq.com'
+    - 'aqqmusic.tc.qq.com'
+    - 'mobileoc.music.tc.qq.com'
+    - 'streamoc.music.tc.qq.com'
+    - 'dl.stream.qqmusic.qq.com'
+    - 'isure.stream.qqmusic.qq.com'
+    ## 网易云音乐
+    - 'music.163.com'
+    - '*.music.163.com'
+    - '*.126.net'
+    ## 虾米音乐
+    - '*.xiami.com'
+    # === Other ===
+    ## QQ Quick Login
+    - 'localhost.ptlogin2.qq.com'
+    - 'localhost.sec.qq.com'
+    ## BiliBili P2P
+    - '*.mcdn.bilivideo.cn'
   nameserver:
     - 223.5.5.5
-    # - 114.114.114.114 # default value
-    # - 8.8.8.8 # default value
-    # - tls://dns.rubyfish.cn:853 # DNS over TLS
-    # - https://1.1.1.1/dns-query # DNS over HTTPS
-    # - dhcp://en0 # dns from dhcp
 
-  # When `fallback` is present, the DNS server will send concurrent requests
-  # to the servers in this section along with servers in `nameservers`.
-  # The answers from fallback servers are used when the GEOIP country
-  # is not `CN`.
-  # fallback:
-  #   - tcp://1.1.1.1
-
-  # If IP addresses resolved with servers in `nameservers` are in the specified
-  # subnets below, they are considered invalid and results from `fallback`
-  # servers are used instead.
-  #
-  # IP address resolved with servers in `nameserver` is used when
-  # `fallback-filter.geoip` is true and when GEOIP of the IP address is `CN`.
-  #
-  # If `fallback-filter.geoip` is false, results from `nameserver` nameservers
-  # are always used if not match `fallback-filter.ipcidr`.
-  #
-  # This is a countermeasure against DNS pollution attacks.
-  # fallback-filter:
-  #   geoip: true
-  #   geoip-code: CN
-  #   ipcidr:
-  #     - 240.0.0.0/4
-  #   domain:
-  #     - '+.google.com'
-  #     - '+.facebook.com'
-  #     - '+.youtube.com'
-  
-  # Lookup domains via specific nameservers
-  # nameserver-policy:
-  #   'www.baidu.com': '114.114.114.114'
-  #   '+.internal.crop.com': '10.0.0.1'
-{% endif %}
-{% if local.clash.new_field_name == "true" %}
-proxies: ~
-proxy-groups: ~
-rules: ~
-{% else %}
-Proxy: ~
-Proxy Group: ~
-Rule: ~
 {% endif %}
