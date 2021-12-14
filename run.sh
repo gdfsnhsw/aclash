@@ -249,19 +249,24 @@ function _install() {
     rm -rf /etc/clash/dashboard
     assert mv -f -T dashboard /etc/clash/dashboard
 
+#supervisor
     assert install -m 0644 supervisor/clash.conf /etc/supervisor/conf.d
     assert install -m 0644 supervisor/mosdns.conf /etc/supervisor/conf.d
     assert install -m 0644 supervisor/subconverter.conf /etc/supervisor/conf.d
     assert install -m 0644 supervisor/supervisord.conf /etc/supervisor/supervisord.conf
-    
+
+#nftables
     assert install -m 0644 ./chnroute.nft /lib/clash
     assert install -m 0644 files/private.nft /lib/clash
     assert install -m 0644 files/cn_tun.conf /lib/clash
     assert install -m 0644 files/cn_tproxy.conf /lib/clash
+    assert install -m 0644 files/cn_redir-tun.conf /lib/clash
 
+#systemctl
     assert install -m 0644 files/subconverter.service /etc/systemd/system/subconverter.service
     assert install -m 0644 files/mosdns.service /etc/systemd/system/mosdns.service
-    
+
+#subconverter
     if [ ! -d "/etc/subconverter" ];then
     tar -zxvf subconverter.tar.gz -C /etc/
     assert install -m 0644 subconverter/formyairport.ini /etc/subconverter/profiles
@@ -270,6 +275,7 @@ function _install() {
     assert install -m 0644 subconverter/all_base.tpl /etc/subconverter/base/all_base.tpl
     fi
 
+#mosdns
     assert install -m 0755 ./mosdns /bin/mosdns
     if [ ! -d "/etc/mosdns" ];then
     mkdir /etc/mosdns
