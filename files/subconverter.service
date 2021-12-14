@@ -1,0 +1,13 @@
+[Unit]
+Description=A API For Subscription Convert
+After=network.target
+ 
+[Service]
+Type=simple
+ExecStart=/etc/subconverter/subconverter
+WorkingDirectory=/root/subconverter
+Restart=always
+RestartSec=10
+ 
+[Install]
+WantedBy=multi-user.target
