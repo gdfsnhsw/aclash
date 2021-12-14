@@ -79,7 +79,7 @@ function _download() {
     clash_dashboard_download_url="https://github.com/Dreamacro/clash-dashboard/archive/gh-pages.zip"
     echo "Start download Clash Dashboard from ${clash_dashboard_download_url}"
     assert curl -L -# -o dashboard.zip "${url_prefix}${clash_dashboard_download_url}"
-    if [ ! -f ui.zip ]; then
+    if [ ! -f dashboard.zip ]; then
         echo "Failed to download Clash Dashboard"
         echo "Please download and upload it to current directory manually"
         exit 1
