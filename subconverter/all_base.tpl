@@ -22,10 +22,6 @@ profile:
   store-fake-ip: true       #持久化fake-ip
 
 hosts:
-hosts:
-  # '*.clash.dev': 127.0.0.1
-  # '.dev': 127.0.0.1
-  # 'alpha.clash.dev': '::1'
   # Firebase Cloud Messaging
   'mtalk.google.com': 108.177.125.188
   # Google Dl
