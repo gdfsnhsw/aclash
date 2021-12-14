@@ -38,7 +38,7 @@ Simple clash premiun core installer with full tun support for Linux.
    ./run.sh redir-tun
    ```
 
-```bash
+   ```bash
    ./run.sh tun
    ```
    
