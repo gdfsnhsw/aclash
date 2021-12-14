@@ -259,6 +259,9 @@ function _install() {
     assert install -m 0644 files/cn_tun.conf /lib/clash
     assert install -m 0644 files/cn_tproxy.conf /lib/clash
 
+    assert install -m 0644 files/subconverter.service /etc/systemd/system/subconverter.service
+    assert install -m 0644 files/mosdns.service /etc/systemd/system/mosdns.service
+    
     if [ ! -d "/etc/subconverter" ];then
     tar -zxvf subconverter.tar.gz -C /etc/
     assert install -m 0644 subconverter/formyairport.ini /etc/subconverter/profiles
