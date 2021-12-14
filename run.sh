@@ -345,7 +345,15 @@ function _uninstall() {
     rm -rf /etc/default/clash
     rm -rf /etc/clash/ui
     
+    systemctl subconverter 
+    sleep 0.5
+    systemctl disable subconverter
+    systemctl stop mosdns
+    sleep 0.5
+    systemctl disable mosdns
     rm -rf /bin/mosdns
+    rm -rf /etc/systemd/system/subconverter.service
+    rm -rf /etc/systemd/system/mosdns.service
     rm -rf /etc/supervisor/conf.d/*
 
     echo "Uninstall successfully"
