@@ -386,8 +386,10 @@ function _help() {
 case "$1" in
 "dl") _download $1;;
 "dl_proxy") _download $1;;
+"redir-tun") _install $1;;
 "tun") _install $1;;
 "tproxy") _install $1;;
+"cn_redir-tun") _install $1;;
 "cn_tun") _install $1;;
 "cn_tproxy") _install $1;;
 "uninstall") _uninstall $1;;
