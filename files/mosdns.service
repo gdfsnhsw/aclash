@@ -1,0 +1,12 @@
+[Unit]
+Description=A plug-in "programmable" DNS forwarder/splitter
+After=network.target
+ 
+[Service]
+Type=simple
+ExecStart=/usr/bin/mosdns -c /etc/mosdns/config.yaml -dir /etc/mosdns
+Restart=always
+RestartSec=10
+ 
+[Install]
+WantedBy=multi-user.target
