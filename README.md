@@ -13,8 +13,8 @@ Simple clash premiun core installer with full tun support for Linux.
 2. Clone repository
 
    ```bash
-   git clone https://ghproxy.com/https://github.com/gdfsnhsw/aioclash aioclash && 
-   chmod +x /root/aioclash/run.sh
+   git clone https://ghproxy.com/https://github.com/gdfsnhsw/aclash aclash && 
+   chmod +x /root/aclash/run.sh
    ```
 
 3. Run Installer
