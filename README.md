@@ -20,7 +20,7 @@ Simple clash premiun core installer with full tun support for Linux.
 3. Run Installer
 
    ```bash
-   cd aioclash
+   cd aclash
    ```
    
    
