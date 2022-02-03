@@ -45,7 +45,7 @@ function _download() {
     release_info_url="https://api.github.com/repos/Dreamacro/clash/releases/tags/premium"
 
     if [[ "$1" =~ "proxy" ]]; then
-        url_prefix="https://ghproxy.com/"
+        url_prefix="https://gh.168828.com/"
     else
         url_prefix=""
     fi
