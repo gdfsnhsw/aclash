@@ -189,11 +189,11 @@ function _download() {
 
 # chnroute.nft 
 
-    chnroute_download_url="http://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest"
-    echo "Start download chnroute.nft from ${chnroute_download_url}"
-    assert curl -L -# -o raw "${chnroute_download_url}"
+    china_ip_list_download_url="https://raw.githubusercontent.com/17mon/china_ip_list/master/china_ip_list.txt"
+    echo "Start download china_ip_list from ${china_ip_list_download_url}"
+    assert curl -L -# -o raw "${china_ip_list_download_url}"
     echo "define chnroute_list = {" > chnroute.nft
-    assert cat raw | grep ipv4 | grep CN | awk -F\| '{ printf("%s/%d\n", $4, 32-log($5)/log(2)) }' | sed s/$/,/g >> chnroute.nft
+    cat china_ip_list.txt | sed s/$/,/g >> chnroute.nft
     echo "}" >> chnroute.nft
 
 
