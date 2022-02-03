@@ -191,7 +191,7 @@ function _download() {
 
     china_ip_list_download_url="https://raw.githubusercontent.com/17mon/china_ip_list/master/china_ip_list.txt"
     echo "Start download china_ip_list from ${china_ip_list_download_url}"
-    assert curl -L -# -o raw "${china_ip_list_download_url}"
+    assert curl -L -# -o china_ip_list.txt "${china_ip_list_download_url}"
     echo "define chnroute_list = {" > chnroute.nft
     cat china_ip_list.txt | sed s/$/,/g >> chnroute.nft
     echo "}" >> chnroute.nft
